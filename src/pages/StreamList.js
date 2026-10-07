@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaPlus, FaCheck, FaEdit, FaTrash } from "react-icons/fa";
 
 function StreamList() {
   const [title, setTitle] = useState("");
@@ -68,7 +69,9 @@ function StreamList() {
           onChange={(event) => setTitle(event.target.value)}
         />
 
-        <button type="submit">Add to StreamList</button>
+        <button type="submit">
+  <FaPlus /> Add to StreamList
+</button>
       </form>
 
       <ul>
@@ -96,16 +99,16 @@ function StreamList() {
                 {item.title}
 
                 <button onClick={() => handleComplete(item.id)}>
-                  Complete
-                </button>
+  <FaCheck /> Complete
+</button>
 
                 <button onClick={() => handleEdit(item)}>
-                  Edit
-                </button>
+  <FaEdit /> Edit
+</button>
 
                 <button onClick={() => handleDelete(item.id)}>
-                  Delete
-                </button>
+  <FaTrash /> Delete
+</button>
               </>
             )}
           </li>
