@@ -56,6 +56,11 @@ function StreamList() {
     setEditingTitle("");
   };
 
+  const handleCancelEdit = () => {
+  setEditingId(null);
+  setEditingTitle("");
+};
+
   return (
     <div className="streamlist-container">
       <h1>StreamList</h1>
@@ -93,6 +98,9 @@ function StreamList() {
                 <button onClick={() => handleSaveEdit(item.id)}>
                   Save
                 </button>
+                <button onClick={handleCancelEdit}>
+  Cancel
+</button>
               </>
             ) : (
               <>
