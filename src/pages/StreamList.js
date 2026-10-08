@@ -57,11 +57,11 @@ function StreamList() {
   };
 
   return (
-    <div>
+    <div className="streamlist-container">
       <h1>StreamList</h1>
       <p>Add a movie or program you want to watch.</p>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="streamlist-form">
         <input
           type="text"
           placeholder="Enter a movie or program"
@@ -74,7 +74,7 @@ function StreamList() {
 </button>
       </form>
 
-      <ul>
+      <ul className="streamlist-items">
         {items.map((item) => (
           <li
             key={item.id}
@@ -96,7 +96,7 @@ function StreamList() {
               </>
             ) : (
               <>
-                {item.title}
+                <span>{item.title}</span>
 
                 <button onClick={() => handleComplete(item.id)}>
   <FaCheck /> Complete
