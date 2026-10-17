@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPlus, FaCheck, FaEdit, FaTrash } from "react-icons/fa";
 
 function StreamList() {
   const [title, setTitle] = useState("");
-  const [items, setItems] = useState([]);
+
+  const [items, setItems] = useState(() => {
+    try {
+      const savedItems = localStorage.getItem("streamlist-items");
+      return savedItems ? JSON.parse(savedItems) : [];
+    } catch (error) {
+      console.error("Unable to load saved items:", error);
+      return [];
+    }
+  });
+
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("streamlist-items", JSON.stringify(items));
+  }, [items]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -16,17 +30,17 @@ function StreamList() {
 
     const newItem = {
       id: Date.now(),
-      title: title,
+      title: title.trim(),
       completed: false,
     };
 
-    setItems([...items, newItem]);
+    setItems((currentItems) => [...currentItems, newItem]);
     setTitle("");
   };
 
   const handleComplete = (id) => {
-    setItems(
-      items.map((item) =>
+    setItems((currentItems) =>
+      currentItems.map((item) =>
         item.id === id
           ? { ...item, completed: !item.completed }
           : item
@@ -35,7 +49,9 @@ function StreamList() {
   };
 
   const handleDelete = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+    setItems((currentItems) =>
+      currentItems.filter((item) => item.id !== id)
+    );
   };
 
   const handleEdit = (item) => {
@@ -44,10 +60,14 @@ function StreamList() {
   };
 
   const handleSaveEdit = (id) => {
-    setItems(
-      items.map((item) =>
+    if (editingTitle.trim() === "") {
+      return;
+    }
+
+    setItems((currentItems) =>
+      currentItems.map((item) =>
         item.id === id
-          ? { ...item, title: editingTitle }
+          ? { ...item, title: editingTitle.trim() }
           : item
       )
     );
@@ -57,9 +77,9 @@ function StreamList() {
   };
 
   const handleCancelEdit = () => {
-  setEditingId(null);
-  setEditingTitle("");
-};
+    setEditingId(null);
+    setEditingTitle("");
+  };
 
   return (
     <div className="streamlist-container">
@@ -75,8 +95,8 @@ function StreamList() {
         />
 
         <button type="submit">
-  <FaPlus /> Add to StreamList
-</button>
+          <FaPlus /> Add to StreamList
+        </button>
       </form>
 
       <ul className="streamlist-items">
@@ -92,31 +112,49 @@ function StreamList() {
                 <input
                   type="text"
                   value={editingTitle}
-                  onChange={(event) => setEditingTitle(event.target.value)}
+                  onChange={(event) =>
+                    setEditingTitle(event.target.value)
+                  }
                 />
 
-                <button onClick={() => handleSaveEdit(item.id)}>
+                <button
+                  type="button"
+                  onClick={() => handleSaveEdit(item.id)}
+                >
                   Save
                 </button>
-                <button onClick={handleCancelEdit}>
-  Cancel
-</button>
+
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </button>
               </>
             ) : (
               <>
                 <span>{item.title}</span>
 
-                <button onClick={() => handleComplete(item.id)}>
-  <FaCheck /> Complete
-</button>
+                <button
+                  type="button"
+                  onClick={() => handleComplete(item.id)}
+                >
+                  <FaCheck /> Complete
+                </button>
 
-                <button onClick={() => handleEdit(item)}>
-  <FaEdit /> Edit
-</button>
+                <button
+                  type="button"
+                  onClick={() => handleEdit(item)}
+                >
+                  <FaEdit /> Edit
+                </button>
 
-                <button onClick={() => handleDelete(item.id)}>
-  <FaTrash /> Delete
-</button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <FaTrash /> Delete
+                </button>
               </>
             )}
           </li>
