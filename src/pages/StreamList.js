@@ -17,9 +17,15 @@ function StreamList() {
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
 
-  useEffect(() => {
+  
+useEffect(() => {
+  try {
     localStorage.setItem("streamlist-items", JSON.stringify(items));
-  }, [items]);
+  } catch (error) {
+    console.error("Unable to save items:", error);
+  }
+}, [items]);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -29,7 +35,7 @@ function StreamList() {
     }
 
     const newItem = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       title: title.trim(),
       completed: false,
     };
@@ -101,12 +107,7 @@ function StreamList() {
 
       <ul className="streamlist-items">
         {items.map((item) => (
-          <li
-            key={item.id}
-            style={{
-              textDecoration: item.completed ? "line-through" : "none",
-            }}
-          >
+          <li key={item.id}>
             {editingId === item.id ? (
               <>
                 <input
@@ -133,7 +134,13 @@ function StreamList() {
               </>
             ) : (
               <>
-                <span>{item.title}</span>
+                <span
+  style={{
+    textDecoration: item.completed ? "line-through" : "none",
+  }}
+>
+  {item.title}
+</span>
 
                 <button
                   type="button"
